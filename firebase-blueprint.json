@@ -1,0 +1,110 @@
+{
+  "entities": {
+    "CollectionItem": {
+      "title": "Collection Item",
+      "description": "A digital artifact or relic in the museum's collection",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "origin": { "type": "string" },
+        "philosophy": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "audioUrl": { "type": "string" },
+        "videoUrl": { "type": "string" },
+        "category": { "type": "string" },
+        "region": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "description", "imageUrl", "category", "region"]
+    },
+    "Kingdom": {
+      "title": "Kingdom",
+      "description": "A historical kingdom in Nusantara",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "period": { "type": "string" },
+        "region": { "type": "string" },
+        "capitals": { "type": "array" },
+        "lineage": { "type": "string" },
+        "relics": { "type": "array" },
+        "mapUrl": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "videoUrl": { "type": "string" }
+      },
+      "required": ["name", "description", "period"]
+    },
+    "TimelineEvent": {
+      "title": "Timeline Event",
+      "description": "A significant event in Nusantara history",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "year": { "type": "string" },
+        "category": { "type": "string", "enum": ["prasejarah", "hindu-buddha", "islam", "kolonial", "kemerdekaan", "modern"] },
+        "description": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "audioUrl": { "type": "string" }
+      },
+      "required": ["title", "year", "category", "description"]
+    },
+    "HistoricalFigure": {
+      "title": "Historical Figure",
+      "description": "A king, hero, or cultural figure in Nusantara history",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "title": { "type": "string" },
+        "biography": { "type": "string" },
+        "influence": { "type": "string" },
+        "period": { "type": "string" },
+        "imageUrl": { "type": "string" }
+      },
+      "required": ["name", "biography", "imageUrl"]
+    },
+    "Manuscript": {
+      "title": "Manuscript / Syair",
+      "description": "A piece of Nusantara literature or manuscript",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "author": { "type": "string" },
+        "content": { "type": "string" },
+        "philosophy": { "type": "string" },
+        "audioUrl": { "type": "string" },
+        "imageUrl": { "type": "string" }
+      },
+      "required": ["title", "content"]
+    },
+    "Exhibition": {
+      "title": "Exhibition",
+      "description": "A digital exhibition event",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "startDate": { "type": "string", "format": "date-time" },
+        "endDate": { "type": "string", "format": "date-time" },
+        "imageUrl": { "type": "string" },
+        "isActive": { "type": "boolean" },
+        "ticketUrl": { "type": "string" }
+      },
+      "required": ["title", "description", "startDate", "endDate", "imageUrl"]
+    }
+  },
+  "firestore": {
+    "collections": { "schema": "CollectionItem", "description": "Museum artifacts collection" },
+    "kingdoms": { "schema": "Kingdom", "description": "Nusantara kingdoms" },
+    "timeline": { "schema": "TimelineEvent", "description": "History timeline" },
+    "figures": { "schema": "HistoricalFigure", "description": "Historical figures" },
+    "manuscripts": { "schema": "Manuscript", "description": "Ancient literature" },
+    "exhibitions": { "schema": "Exhibition", "description": "Event exhibitions" },
+    "gallery": { "schema": "object", "description": "General gallery items" },
+    "audio": { "schema": "object", "description": "Audio experience tracks" }
+  }
+}
