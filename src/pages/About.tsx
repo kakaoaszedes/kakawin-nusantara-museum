@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Award, Eye, Target, Sparkles } from "lucide-react";
 
+
 export default function About() {
   return (
     <div className="min-h-screen bg-matte-black pt-32 pb-20">
@@ -27,11 +28,11 @@ export default function About() {
       <section className="px-6 py-24 glass border-y border-white/5 relative overflow-hidden">
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
           <div className="relative aspect-square rounded-3xl overflow-hidden border border-white/10">
-            <img src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=1000" alt="Culture" className="w-full h-full object-cover grayscale opacity-50" />
+            <img src="https://www.indonesia.travel/contentassets/3a40b74e9d574e1ca94a85506a26e1ed/wayang.png" alt="Culture" className="w-full h-full object-cover grayscale opacity-50" />
             <div className="absolute inset-0 flex items-center justify-center p-12">
               <div className="text-center font-cinzel text-white space-y-4">
                 <span className="text-6xl block text-gold-elegant">X</span>
-                <span className="text-2xl tracking-[0.3em] uppercase">Est. 2026</span>
+                <span className="text-2xl tracking-[0.3em] uppercase">Wayang Kulit</span>
               </div>
             </div>
           </div>
@@ -45,7 +46,7 @@ export default function About() {
                 <h2 className="text-3xl font-cinzel text-white">Visi Kami</h2>
               </div>
               <p className="text-cream/60 leading-relaxed text-lg">
-                Menjadi pusat pelestarian digital Nusantara yang paling terkemuka di dunia, 
+                Menjadi pusat pelestarian digital Nusantara yang menginspirasi dan mendidik, 
                 menjadikan sejarah masa lalu sebagai inspirasi hidup bagi generasi masa depan.
               </p>
             </div>
@@ -60,7 +61,7 @@ export default function About() {
               <ul className="space-y-4 text-cream/60 text-lg">
                 <li className="flex gap-4">
                   <span className="text-gold-elegant inline-block mt-1">•</span>
-                  Mengkurasi dan mendigitalkan artefak fisik ke dalam bentuk 3D dan resolusi tinggi.
+                  Mengenalkan tentang sejarah tanpa menutup-menutupinya dan mengenalkan budaya Nusantara.
                 </li>
                 <li className="flex gap-4">
                   <span className="text-gold-elegant inline-block mt-1">•</span>

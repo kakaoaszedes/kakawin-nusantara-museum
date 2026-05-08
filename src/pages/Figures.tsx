@@ -11,7 +11,16 @@ export default function Figures() {
     const fetchFigures = async () => {
       try {
         const data = await getAllDocuments("figures");
-        setFigures(data);
+        
+        // Filter by kingdom if provided in URL
+        const params = new URLSearchParams(window.location.search);
+        const kingdomFilter = params.get('kingdom');
+        
+        const filteredData = kingdomFilter 
+          ? data.filter(f => f.kingdomId === kingdomFilter)
+          : data;
+
+        setFigures(filteredData);
       } catch (err) {
         console.error(err);
       } finally {
@@ -28,7 +37,7 @@ export default function Figures() {
           <motion.h1 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-5xl md:text-7xl font-cinzel text-gold-elegant mb-6 italic"
+            className="text-4xl md:text-7xl font-cinzel text-gold-elegant mb-6 italic"
           >
             Tokoh Sejarah
           </motion.h1>

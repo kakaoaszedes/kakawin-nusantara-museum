@@ -5,20 +5,28 @@ import { getAllDocuments } from "../services/db";
 
 export default function Kingdoms() {
   const [kingdoms, setKingdoms] = useState<any[]>([]);
+  const [collections, setCollections] = useState<any[]>([]);
+  const [tours, setTours] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchKingdoms = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getAllDocuments("kingdoms");
-        setKingdoms(data);
+        const [kData, cData, tData] = await Promise.all([
+          getAllDocuments("kingdoms"),
+          getAllDocuments("collections"),
+          getAllDocuments("virtual-tour")
+        ]);
+        setKingdoms(kData);
+        setCollections(cData);
+        setTours(tData);
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
-    fetchKingdoms();
+    fetchData();
   }, []);
 
   return (
@@ -28,7 +36,7 @@ export default function Kingdoms() {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-cinzel text-gold-elegant mb-6"
+            className="text-4xl md:text-7xl font-cinzel text-gold-elegant mb-6"
           >
             Sejarah Kerajaan
           </motion.h1>
@@ -85,28 +93,44 @@ export default function Kingdoms() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-8 py-8 border-y border-white/5">
-                      <div className="space-y-2">
+                      <div className="space-y-4">
                          <div className="flex items-center gap-2 text-gold-elegant/60 uppercase tracking-widest text-[10px]">
                            <Landmark size={12} />
-                           <span>Peninggalan</span>
+                           <span>Koleksi Terkait</span>
                          </div>
-                         <ul className="text-sm text-cream/50 space-y-1">
-                           {(kingdom.relics || []).map((r: string) => <li key={r}>• {r}</li>)}
-                         </ul>
+                         <div className="flex flex-wrap gap-2">
+                           {collections.filter(c => c.kingdomId === kingdom.id).length > 0 ? (
+                             collections.filter(c => c.kingdomId === kingdom.id).slice(0, 3).map(c => (
+                               <div key={c.id} className="px-3 py-1 bg-white/5 rounded-full text-[10px] text-cream border border-white/10 italic">
+                                 {c.title}
+                               </div>
+                             ))
+                           ) : (
+                             <span className="text-[10px] text-cream/20 italic">Belum ada koleksi terdaftar</span>
+                           )}
+                         </div>
                       </div>
                       <div className="space-y-4">
                          <div className="flex items-center gap-4">
                            <Map className="text-gold-elegant" size={24} />
                            <span className="text-xs text-cream/40 uppercase tracking-widest">Peta Wilayah</span>
                          </div>
-                         <div className="flex items-center gap-4">
-                           <ScrollText className="text-gold-elegant" size={24} />
-                           <span className="text-xs text-cream/40 uppercase tracking-widest">Silsilah Raja</span>
-                         </div>
+                         {tours.some(t => t.kingdomId === kingdom.id) && (
+                           <button 
+                             onClick={() => window.location.href = `/tour?kingdom=${kingdom.id}`}
+                             className="flex items-center gap-4 group/tour cursor-pointer"
+                           >
+                             <ScrollText className="text-gold-elegant group-hover/tour:scale-110 transition-transform" size={24} />
+                             <span className="text-xs text-gold-elegant uppercase tracking-widest font-black underline underline-offset-4 decoration-gold-elegant/30 hover:decoration-gold-elegant transition-all">Buka Virtual Tour 360°</span>
+                           </button>
+                         )}
                       </div>
                     </div>
 
-                    <button className="text-gold-elegant font-medium flex items-center gap-4 hover:gap-6 transition-all group">
+                    <button 
+                      onClick={() => window.location.href = `/kingdom-archive?id=${kingdom.id}`}
+                      className="text-gold-elegant font-medium flex items-center gap-4 hover:gap-6 transition-all group"
+                    >
                       <span className="h-px w-12 bg-gold-elegant group-hover:w-20 transition-all" />
                       Buka Arsip Dokumentasi
                     </button>

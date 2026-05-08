@@ -7,6 +7,7 @@ import { getAllDocuments } from "../services/db";
 export default function Exhibitions() {
   const [exhibitions, setExhibitions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState("Semua");
 
   useEffect(() => {
     const fetchExhibitions = async () => {
@@ -22,12 +23,48 @@ export default function Exhibitions() {
     fetchExhibitions();
   }, []);
 
-  const activeEvent = exhibitions.find(e => e.isActive || e.status === 'active');
-  const upcomingEvents = exhibitions.filter(e => e.status === 'upcoming' || (!e.isActive && new Date(e.startDate) > new Date()));
-  const archive = exhibitions.filter(e => e.status === 'archive' || (!e.isActive && new Date(e.endDate) < new Date()));
+  const now = new Date();
+  
+  const activeEvents = exhibitions.filter(e => {
+    const isMatchingDate = (() => {
+      if (e.status === 'active') return true;
+      if (e.startDate && e.endDate) {
+        const start = new Date(e.startDate);
+        const end = new Date(e.endDate);
+        end.setHours(23, 59, 59, 999);
+        return now >= start && now <= end;
+      }
+      return e.isActive;
+    })();
+
+    if (!isMatchingDate) return false;
+    if (selectedCategory === "Semua") return true;
+    return e.category === selectedCategory;
+  });
+
+  const upcomingEvents = exhibitions.filter(e => {
+    if (activeEvents.some(ae => ae.id === e.id)) return false;
+    if (e.status === 'upcoming') return true;
+    if (e.startDate) {
+      const start = new Date(e.startDate);
+      return start > now;
+    }
+    return false;
+  });
+
+  const archive = exhibitions.filter(e => {
+    if (activeEvents.some(ae => ae.id === e.id)) return false;
+    if (e.status === 'archive') return true;
+    if (e.endDate) {
+      const end = new Date(e.endDate);
+      end.setHours(23, 59, 59, 999);
+      return end < now;
+    }
+    return false;
+  });
 
   return (
-    <div className="min-h-screen bg-matte-black pt-32 pb-20 px-6">
+    <div className="min-h-screen bg-matte-black pt-32 pb-20 px-6 font-sans">
       <div className="max-w-7xl mx-auto">
         <header className="text-center mb-24">
           <motion.h1 
@@ -35,10 +72,10 @@ export default function Exhibitions() {
             animate={{ opacity: 1, y: 0 }}
             className="text-5xl md:text-7xl font-cinzel text-gold-elegant mb-6"
           >
-            Pameran Digital
+            Agenda Pameran
           </motion.h1>
           <p className="text-cream/60 max-w-2xl mx-auto uppercase tracking-[0.3em] text-[10px]">
-             Ruang Eksibisi Tematik & Event Kebudayaan
+             Ruang Eksibisi Tematik & Event Kebudayaan Digital
           </p>
         </header>
 
@@ -49,56 +86,90 @@ export default function Exhibitions() {
           </div>
         ) : (
           <>
-            {activeEvent ? (
-              <section className="mb-40">
-                <div className="text-xs uppercase tracking-[0.5em] text-gold-elegant mb-12 flex items-center gap-6">
+            <section className="mb-40">
+              <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-8">
+                <div className="text-xs uppercase tracking-[0.5em] text-gold-elegant flex items-center gap-6">
                   <span className="w-12 h-px bg-gold-elegant" />
-                  Pameran Berlangsung
-                  <span className="w-12 h-px bg-gold-elegant" />
+                  Sedang Berlangsung ({activeEvents.length})
+                  <span className="hidden md:block w-12 h-px bg-gold-elegant" />
                 </div>
 
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="relative h-[600px] rounded-[3rem] overflow-hidden group shadow-[0_0_100px_rgba(212,175,55,0.15)]"
-                >
-                  <div className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105" style={{ backgroundImage: `url(${activeEvent.imageUrl || activeEvent.image})` }} />
-                  <div className="absolute inset-0 bg-gradient-to-r from-matte-black via-matte-black/40 to-transparent" />
-                  
-                  <div className="absolute inset-y-0 left-0 p-12 md:p-20 flex flex-col justify-center max-w-2xl">
-                     <div className="bg-gold-elegant text-matte-black px-4 py-2 rounded-full w-fit flex items-center gap-2 mb-8 animate-pulse">
-                        <div className="w-2 h-2 rounded-full bg-matte-black animate-ping" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">LIVE NOW</span>
-                     </div>
-                     
-                     <h2 className="text-4xl md:text-6xl font-cinzel text-white mb-6 leading-tight">{activeEvent.title}</h2>
-                     <p className="text-lg text-cream/70 mb-10 leading-relaxed font-light">
-                       {activeEvent.description || activeEvent.desc}
-                     </p>
-
-                     <div className="flex flex-wrap gap-6 items-center">
-                        <div className="flex items-center gap-3 text-gold-elegant">
-                           <Calendar size={20} />
-                           <span className="font-medium">{activeEvent.date || `${activeEvent.startDate.toDate?.()?.toLocaleDateString() || activeEvent.startDate} - ${activeEvent.endDate.toDate?.()?.toLocaleDateString() || activeEvent.endDate}`}</span>
-                        </div>
-                        <Button size="lg" className="gap-3">
-                           Dapatkan Tiket Virtual
-                           <Ticket size={20} />
-                        </Button>
-                     </div>
-                  </div>
-
-                  <div className="absolute bottom-12 right-12 text-right">
-                     <span className="text-cream/30 uppercase tracking-[0.3em] text-[10px] block mb-2">Pameran Aktif</span>
-                     <span className="text-4xl font-cinzel text-gold-elegant font-bold">TERBUKA</span>
-                  </div>
-                </motion.div>
-              </section>
-            ) : (
-              <div className="text-center py-32 glass rounded-3xl border border-white/5 mb-40">
-                 <h3 className="text-2xl font-cinzel text-cream/40 px-4">Tidak ada pameran yang sedang berlangsung saat ini.</h3>
+                <div className="flex gap-4 overflow-x-auto pb-4 w-full md:w-auto px-4 custom-scrollbar lg:justify-end">
+                   {["Semua", "Sastra & Syair", "Tokoh Sejarah", "Seni Lukis", "Manuskrip Kuno", "Artefak & Senjata"].map(cat => (
+                     <button 
+                        key={cat}
+                        onClick={() => setSelectedCategory(cat)}
+                        className={`px-6 py-2 rounded-full border text-[10px] uppercase tracking-widest transition-all whitespace-nowrap ${
+                          selectedCategory === cat 
+                          ? "border-gold-elegant bg-gold-elegant text-matte-black font-black" 
+                          : "border-white/10 text-cream/40 hover:border-gold-elegant/50 hover:text-gold-elegant"
+                        }`}
+                     >
+                        {cat}
+                     </button>
+                   ))}
+                </div>
               </div>
-            )}
+
+              {activeEvents.length > 0 ? (
+                <div className="grid md:grid-cols-2 gap-12">
+                  {activeEvents.map((event, idx) => (
+                    <motion.div 
+                      key={event.id || idx}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="relative h-[550px] rounded-[3rem] overflow-hidden group shadow-2xl border border-white/5 bg-[#121212]"
+                    >
+                      <img 
+                        src={event.imageUrl || event.image} 
+                        alt={event.title}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 opacity-60" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-matte-black via-matte-black/60 to-transparent" />
+                      
+                      <div className="absolute inset-x-0 top-0 p-12 flex justify-between items-start pointer-events-none">
+                         <div className="px-4 py-2 bg-matte-black/40 backdrop-blur-md rounded-full border border-white/10 text-[10px] text-gold-elegant font-bold tracking-[0.2em] uppercase">
+                           {event.category || "Pameran Umum"}
+                         </div>
+                      </div>
+
+                      <div className="absolute inset-x-0 bottom-0 p-12 flex flex-col justify-end h-full">
+                         <div className="flex items-center gap-3 mb-6">
+                            <div className="bg-gold-elegant text-matte-black px-3 py-1 rounded-full flex items-center gap-2">
+                               <div className="w-1.5 h-1.5 rounded-full bg-matte-black animate-pulse" />
+                               <span className="text-[8px] font-black uppercase tracking-widest">AKTIF</span>
+                            </div>
+                            <span className="text-xs text-gold-elegant font-mono italic">
+                               {event.startDate} — {event.endDate}
+                            </span>
+                         </div>
+                         
+                         <h2 className="text-3xl font-cinzel text-white mb-4 leading-tight">{event.title}</h2>
+                         <p className="text-sm text-cream/70 mb-8 leading-relaxed line-clamp-3 italic">
+                           {event.description || event.desc}
+                         </p>
+
+                         <div className="flex items-center justify-between pt-6 border-t border-white/10">
+                            <Button variant="outline" className="gap-2 rounded-full px-6 group/btn">
+                               Explore Exhibition
+                               <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                            </Button>
+                            <div className="text-right">
+                               <span className="block text-[8px] uppercase tracking-widest text-cream/30">Lokasi</span>
+                               <span className="text-[10px] text-gold-elegant uppercase font-bold tracking-widest">Ruang Virtual 1</span>
+                            </div>
+                         </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-32 glass rounded-3xl border border-white/5">
+                   <h3 className="text-2xl font-cinzel text-cream/40 px-4 italic">Belum ada pameran yang dibuka hari ini.</h3>
+                </div>
+              )}
+            </section>
 
             <div className="grid lg:grid-cols-12 gap-20">
               {/* Upcoming Section */}

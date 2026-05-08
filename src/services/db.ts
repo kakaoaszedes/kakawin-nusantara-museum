@@ -15,7 +15,19 @@ import {
   type DocumentData,
   type QueryConstraint
 } from 'firebase/firestore';
-import { db, handleFirestoreError, OperationType } from '../lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage, handleFirestoreError, OperationType } from '../lib/firebase';
+
+export async function uploadFile(file: File, folder: string): Promise<string> {
+  try {
+    const fileRef = ref(storage, `${folder}/${Date.now()}_${file.name}`);
+    const snapshot = await uploadBytes(fileRef, file);
+    return await getDownloadURL(snapshot.ref);
+  } catch (error) {
+    console.error("Storage Error:", error);
+    throw error;
+  }
+}
 
 export async function getAllDocuments<T>(collectionPath: string, ...constraints: QueryConstraint[]): Promise<T[]> {
   try {

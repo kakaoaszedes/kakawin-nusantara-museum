@@ -35,10 +35,10 @@ export default function Contact() {
               
               <div className="space-y-8">
                 {[
-                  { icon: <MapPin className="text-gold-elegant" />, label: "Alamat", value: "Jl. Majapahit No. 1, Trowulan, Mojokerto" },
-                  { icon: <Mail className="text-gold-elegant" />, label: "Email", value: "curator@kakawin.id" },
-                  { icon: <Phone className="text-gold-elegant" />, label: "Telepon", value: "+62 812 3456 7890" },
-                  { icon: <Globe className="text-gold-elegant" />, label: "Media Sosial", value: "@kakawin.museum" },
+                 
+                  { icon: <Mail className="text-gold-elegant" />, label: "Email", value: "cristianloughost@gmail.com" },
+                  { icon: <Phone className="text-gold-elegant" />, label: "Telepon", value: "+62 882 0079 62404" },
+                  { icon: <Globe className="text-gold-elegant" />, label: "Media Sosial", value: "@kakawin.id" },
                 ].map((item, idx) => (
                   <div key={idx} className="flex gap-6 items-start group">
                     <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-gold-elegant/50 transition-all shrink-0">
@@ -53,16 +53,6 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Map Preview Placeholder */}
-            <div className="aspect-video rounded-3xl overflow-hidden glass border border-white/10 relative">
-               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1000')] bg-cover opacity-20" />
-               <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin className="text-gold-elegant mx-auto mb-4" size={40} />
-                    <span className="text-gold-elegant font-cinzel tracking-widest text-sm underline cursor-pointer">Buka di Google Maps</span>
-                  </div>
-               </div>
-            </div>
           </motion.div>
 
           {/* Contact Form */}

@@ -85,7 +85,7 @@ export default function Collections() {
             <motion.h1 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="text-5xl md:text-6xl font-cinzel text-gold-elegant mb-4"
+              className="text-4xl md:text-6xl font-cinzel text-gold-elegant mb-4"
             >
               Koleksi Digital
             </motion.h1>
