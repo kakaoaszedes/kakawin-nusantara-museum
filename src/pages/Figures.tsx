@@ -122,12 +122,12 @@ export default function tokoh() {
                    
                    <div className="prose prose-invert max-w-none">
                       <div 
-                        className="text-[13px] text-cream/70 leading-relaxed translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 line-clamp-3 font-light"
+                        className="text-[13px] text-cream/70 leading-relaxed md:translate-y-4 opacity-100 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 transition-all duration-500 line-clamp-3 font-light"
                         dangerouslySetInnerHTML={{ __html: figure.biography || figure.bio || figure.description }}
                       />
                    </div>
  
-                   <div className="mt-4 flex gap-4 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                   <div className="mt-4 flex gap-4 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-500">
                       <button 
                         onClick={() => setSelectedFigure(figure)}
                         className="flex items-center gap-2 text-[9px] text-gold-elegant uppercase tracking-widest font-bold border-b border-gold-elegant/20 hover:border-gold-elegant transition-all pb-1"
@@ -199,3 +199,4 @@ export default function tokoh() {
     </div>
   );
 }
+
