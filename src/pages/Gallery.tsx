@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Maximize2, X, Camera, Film, Loader2 } from "lucide-react";
-import { getAllDocuments } from "../services/db";
+import { getAllDocuments, getImageUrl } from "../services/db";
 
 export default function Gallery() {
   const [galleryItems, setGalleryItems] = useState<any[]>([]);
@@ -60,8 +60,9 @@ export default function Gallery() {
                 className="group relative aspect-square md:aspect-[4/5] rounded-2xl overflow-hidden glass border border-white/5 cursor-pointer"
               >
                 <img 
-                  src={item.src || item.imageUrl} 
+                  src={getImageUrl(item)} 
                   alt={item.title} 
+                  loading="lazy"
                   className="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000 group-hover:scale-105" 
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-matte-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
@@ -108,7 +109,7 @@ export default function Gallery() {
                 className="relative z-[105] max-w-6xl w-full h-full flex flex-col items-center justify-center"
               >
                  <div className="relative w-full h-[80%] rounded-3xl overflow-hidden glass border border-white/10 shadow-[0_0_100px_rgba(212,175,55,0.1)]">
-                    <img src={selected.src || selected.imageUrl} alt={selected.title} className="w-full h-full object-contain" />
+                    <img src={getImageUrl(selected)} alt={selected.title} className="w-full h-full object-contain" />
                  </div>
                  <div className="mt-8 text-center" onClick={(e) => e.stopPropagation()}>
                     <span className="text-gold-elegant font-cinzel text-xs tracking-[0.3em] mb-2 uppercase block">{selected.category}</span>

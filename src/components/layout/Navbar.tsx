@@ -9,11 +9,10 @@ const navLinks = [
   { name: "Tentang", path: "/about" },
   { name: "Timeline", path: "/timeline" },
   { name: "Budaya", path: "/relics" },
-  { name: "Syair", path: "/manuscripts" },
+  { name: "Sastra", path: "/manuscripts" },
   { name: "Tokoh", path: "/figures" },
   { name: "Kingdom", path: "/kingdoms" },
   { name: "Pameran", path: "/exhibitions" },
-  { name: "Kontak", path: "/contact" },
 ];
 
 export function Navbar() {
@@ -71,11 +70,15 @@ export function Navbar() {
               </span>
             </Link>
           ))}
-          <Link to="/admin">
-            <Button variant="ghost" size="sm" className="gap-2">
-              <User size={16} />
-              Admin
-            </Button>
+          
+          <Link 
+            to="/admin"
+            className={`text-sm font-medium transition-colors hover:text-gold-elegant flex items-center gap-2 ${
+              location.pathname === "/admin" ? "text-gold-elegant" : "text-cream/80"
+            }`}
+          >
+            <User size={16} />
+            Admin
           </Link>
         </div>
 
@@ -107,8 +110,16 @@ export function Navbar() {
                   {link.name}
                 </Link>
               ))}
-              <Link to="/admin" onClick={() => setIsOpen(false)}>
-                <Button variant="outline" className="w-full">Admin Dashboard</Button>
+              
+              <Link 
+                to="/admin"
+                onClick={() => setIsOpen(false)}
+                className={`text-lg font-cinzel flex items-center gap-2 ${
+                  location.pathname === "/admin" ? "text-gold-elegant" : "text-cream"
+                }`}
+              >
+                <User size={18} />
+                Admin
               </Link>
             </div>
           </motion.div>

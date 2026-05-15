@@ -7,6 +7,8 @@ import "@fontsource/cinzel/700.css";
 import "@fontsource/poppins";
 import "@fontsource/poppins/400.css";
 import "@fontsource/poppins/700.css";
+import "@fontsource/playfair-display";
+import "@fontsource/inter";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

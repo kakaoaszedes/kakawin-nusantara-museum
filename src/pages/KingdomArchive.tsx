@@ -12,7 +12,7 @@ import {
   ScrollText,
   AudioLines
 } from "lucide-react";
-import { getAllDocuments, getDocument } from "../services/db";
+import { getAllDocuments, getDocument, getImageUrl } from "../services/db";
 
 export default function KingdomArchive() {
   const [searchParams] = useSearchParams();
@@ -35,18 +35,18 @@ export default function KingdomArchive() {
     const fetchData = async () => {
       try {
         const [kData, allC, allF, allM, allT] = await Promise.all([
-          getDocument("kingdoms", kingdomId),
-          getAllDocuments("collections"),
-          getAllDocuments("figures"),
-          getAllDocuments("manuscripts"),
-          getAllDocuments("timeline")
+          getDocument<any>("kingdoms", kingdomId),
+          getAllDocuments<any>("budaya"),
+          getAllDocuments<any>("tokoh"),
+          getAllDocuments<any>("syair"),
+          getAllDocuments<any>("timeline")
         ]);
 
         setKingdom(kData);
-        setCollections(allC.filter(c => c.kingdomId === kingdomId));
-        setFigures(allF.filter(f => f.kingdomId === kingdomId));
-        setManuscripts(allM.filter(m => m.kingdomId === kingdomId));
-        setTimeline(allT.filter(t => t.kingdomId === kingdomId));
+        setCollections(allC.filter((c: any) => c.kingdomId === kingdomId));
+        setFigures(allF.filter((f: any) => f.kingdomId === kingdomId));
+        setManuscripts(allM.filter((m: any) => m.kingdomId === kingdomId));
+        setTimeline(allT.filter((t: any) => t.kingdomId === kingdomId));
       } catch (err) {
         console.error(err);
       } finally {
@@ -86,8 +86,8 @@ export default function KingdomArchive() {
       <div className="relative h-[60vh] overflow-hidden">
         <div className="absolute inset-0 bg-matte-black/60 z-10" />
         <img 
-          src={kingdom.imageUrl || kingdom.image} 
-          alt={kingdom.name} 
+          src={getImageUrl(kingdom)} 
+          alt={kingdom.name || kingdom.title} 
           className="w-full h-full object-cover blur-sm scale-110" 
         />
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center p-6 bg-gradient-to-t from-matte-black via-transparent to-transparent">
@@ -96,8 +96,8 @@ export default function KingdomArchive() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
-            <span className="text-gold-elegant font-cinzel text-xl tracking-[0.5em] block uppercase">{kingdom.period}</span>
-            <h1 className="text-6xl md:text-8xl font-cinzel text-white tracking-widest">{kingdom.name}</h1>
+            <span className="text-gold-elegant font-cinzel text-lg tracking-[0.5em] block uppercase">{kingdom.period}</span>
+            <h1 className="text-5xl md:text-7xl font-cinzel text-white tracking-widest">{kingdom.name || kingdom.title}</h1>
             <div className="w-24 h-px bg-gold-elegant/50 mx-auto" />
             <p className="text-cream/60 max-w-2xl mx-auto uppercase tracking-widest text-xs">Pusat Dokumentasi Digital Dinasti Nusantara</p>
           </motion.div>
@@ -121,15 +121,27 @@ export default function KingdomArchive() {
              <div className="glass rounded-[3rem] border border-white/10 p-10 space-y-10 sticky top-32 shadow-2xl">
                 <div>
                    <span className="text-[10px] text-gold-elegant uppercase tracking-widest font-black block mb-4">Sejarah Singkat</span>
-                   <p className="text-cream/70 leading-loose italic font-light">
-                      {kingdom.description || kingdom.desc}
-                   </p>
+                   <div className="prose prose-invert max-w-none">
+                      <div 
+                        className="text-cream/70 leading-loose italic font-light"
+                        dangerouslySetInnerHTML={{ __html: kingdom.description || kingdom.desc }}
+                      />
+                   </div>
                 </div>
 
                 <div className="space-y-6 pt-10 border-t border-white/5">
                    <div className="flex justify-between items-center">
                       <span className="text-[10px] text-cream/30 uppercase tracking-widest">Ibu Kota</span>
-                      <span className="text-gold-elegant font-cinzel">{kingdom.region || "Tidak Diketahui"}</span>
+                      <span className="text-gold-elegant font-cinzel">
+                        {kingdom.capital ||
+                          kingdom.origin ||
+                          kingdom.capitals?.[0] ||
+                          "Tidak Diketahui"}
+                      </span>
+                   </div>
+                   <div className="flex justify-between items-center">
+                      <span className="text-[10px] text-cream/30 uppercase tracking-widest">Wilayah</span>
+                      <span className="text-white font-cinzel">{kingdom.region || "Nusantara"}</span>
                    </div>
                    <div className="flex justify-between items-center">
                       <span className="text-[10px] text-cream/30 uppercase tracking-widest">Artefak Terdaftar</span>
@@ -141,15 +153,7 @@ export default function KingdomArchive() {
                    </div>
                 </div>
 
-                <div className="pt-8">
-                   <button 
-                    onClick={() => navigate(`/virtual-tour?kingdom=${kingdomId}`)}
-                    className="w-full py-4 bg-gold-elegant text-matte-black rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 hover:scale-[1.02] transition-all shadow-xl shadow-gold-elegant/20"
-                   >
-                      <ScrollText size={16} />
-                      Buka Virtual Tour
-                   </button>
-                </div>
+
              </div>
           </div>
 
@@ -163,7 +167,7 @@ export default function KingdomArchive() {
                    </div>
                    <div>
                       <h2 className="text-3xl font-cinzel text-white tracking-widest">Koleksi & Pusaka</h2>
-                      <p className="text-[10px] text-cream/30 uppercase tracking-[0.3em]">Harta Karun {kingdom.name}</p>
+                      <p className="text-[10px] text-cream/30 uppercase tracking-[0.3em]">Harta Karun {kingdom.name || kingdom.title}</p>
                    </div>
                 </div>
 
@@ -171,7 +175,7 @@ export default function KingdomArchive() {
                    {collections.slice(0, 4).map(item => (
                       <div key={item.id} className="group cursor-pointer" onClick={() => navigate(`/relics?kingdom=${kingdomId}`)}>
                          <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-white/5 mb-6">
-                            <img src={item.imageUrl || item.image} alt={item.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700" />
+                            <img src={getImageUrl(item)} alt={item.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700" />
                             <div className="absolute inset-0 bg-gradient-to-t from-matte-black via-transparent to-transparent opacity-60" />
                          </div>
                          <h4 className="font-cinzel text-xl text-white group-hover:text-gold-elegant transition-colors">{item.title}</h4>
@@ -201,10 +205,10 @@ export default function KingdomArchive() {
                    {figures.map(item => (
                       <div key={item.id} className="flex items-center gap-6 p-6 rounded-2xl hover:bg-white/5 transition-all group" onClick={() => navigate(`/figures?kingdom=${kingdomId}`)}>
                          <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10 group-hover:border-gold-elegant transition-all grayscale group-hover:grayscale-0">
-                            <img src={item.imageUrl || item.image} alt="" className="w-full h-full object-cover" />
+                            <img src={getImageUrl(item)} alt="" className="w-full h-full object-cover" />
                          </div>
                          <div className="flex-1">
-                            <h4 className="text-xl font-cinzel text-white group-hover:text-gold-elegant transition-colors">{item.name}</h4>
+                            <h4 className="text-xl font-cinzel text-white group-hover:text-gold-elegant transition-colors">{item.name || item.title}</h4>
                             <span className="text-[10px] text-cream/40 uppercase tracking-widest">{item.title}</span>
                          </div>
                       </div>
@@ -220,7 +224,7 @@ export default function KingdomArchive() {
                       <BookMarked size={24} />
                    </div>
                    <div>
-                      <h2 className="text-3xl font-cinzel text-white tracking-widest">Syair & Sastra</h2>
+                      <h2 className="text-3xl font-cinzel text-white tracking-widest">Sastra</h2>
                       <p className="text-[10px] text-cream/30 uppercase tracking-[0.3em]">Rekaman Budaya Tertulis</p>
                    </div>
                 </div>
@@ -247,7 +251,7 @@ export default function KingdomArchive() {
                    </div>
                    <div>
                       <h2 className="text-3xl font-cinzel text-white tracking-widest">Garis Waktu Peristiwa</h2>
-                      <p className="text-[10px] text-cream/30 uppercase tracking-[0.3em]">Kronologi Kejayaan {kingdom.name}</p>
+                      <p className="text-[10px] text-cream/30 uppercase tracking-[0.3em]">Kronologi Kejayaan {kingdom.name || kingdom.title}</p>
                    </div>
                 </div>
 

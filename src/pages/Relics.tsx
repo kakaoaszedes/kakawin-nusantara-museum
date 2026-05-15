@@ -1,27 +1,28 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Info, Volume2, Video, MapPinned, Loader2, X, PlayCircle, BookOpen } from "lucide-react";
+import { Info, Volume2, Video, MapPinned, Loader2, X, PlayCircle, BookOpen, Search } from "lucide-react";
 import { Button } from "../components/ui/Button";
-import { getAllDocuments } from "../services/db";
+import { getAllDocuments, getImageUrl, getVideoUrl } from "../services/db";
 
 export default function Relics() {
   const [relics, setRelics] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("Semua");
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedRelic, setSelectedRelic] = useState<any>(null);
   const [activeVideo, setActiveVideo] = useState<any>(null);
 
   useEffect(() => {
     const fetchRelics = async () => {
       try {
-        const data = await getAllDocuments("collections");
+        const data = await getAllDocuments<any>("budaya");
         
         // Filter by kingdom if provided in URL
         const params = new URLSearchParams(window.location.search);
         const kingdomFilter = params.get('kingdom');
         
         const filteredData = kingdomFilter 
-          ? data.filter(p => p.kingdomId === kingdomFilter)
+          ? data.filter((p: any) => p.kingdomId === kingdomFilter)
           : data;
 
         setRelics(filteredData);
@@ -41,6 +42,27 @@ export default function Relics() {
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : url;
   };
+
+  const filteredRelics = relics.filter((relic) => {
+    const keyword = searchQuery.toLowerCase();
+    const searchableText = [
+      relic.title,
+      relic.category,
+      relic.description,
+      relic.desc,
+      relic.content,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    const matchesSearch = searchableText.includes(keyword);
+    const matchesCategory =
+      selectedCategory === "Semua" ||
+      relic.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="min-h-screen bg-matte-black pt-32 pb-20 px-6">
@@ -72,6 +94,21 @@ export default function Relics() {
                 </button>
              ))}
           </div>
+
+          <div className="max-w-md mx-auto relative group mt-10">
+            <Search
+              className="absolute left-6 top-1/2 -translate-y-1/2 text-cream/20 group-focus-within:text-gold-elegant transition-colors"
+              size={18}
+            />
+
+            <input
+              type="text"
+              placeholder="Cari budaya atau pusaka..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-16 pr-8 text-cream outline-none focus:border-gold-elegant transition-all text-sm"
+            />
+          </div>
         </header>
 
         {loading ? (
@@ -85,86 +122,85 @@ export default function Relics() {
              <p className="text-cream/20 mt-4 italic">Silakan periksa kembali di lain waktu.</p>
           </div>
         ) : (
-          <div className="space-y-40">
-            {relics
-              .filter(r => selectedCategory === "Semua" || r.category === selectedCategory)
-              .map((relic, i) => (
-              <motion.div 
-                key={relic.id || i}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 1 }}
-                viewport={{ once: true }}
-                className={`flex flex-col lg:flex-row gap-20 items-center ${i % 2 !== 0 ? 'lg:flex-row-reverse' : ''}`}
-              >
-                {/* Image with Decorative Border */}
-                <div className="flex-1 relative group">
-                  <div className="absolute -inset-4 border border-gold-elegant/20 rounded-2xl group-hover:-inset-6 transition-all duration-700" />
-                  <div className="relative aspect-square md:aspect-[4/3] rounded-xl overflow-hidden glass shadow-2xl">
-                    <img src={relic.imageUrl || relic.image} alt={relic.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-matte-black/80 via-transparent to-transparent" />
-                    
-                    <div className="absolute top-6 left-6">
-                       <span className="px-4 py-2 bg-matte-black/60 backdrop-blur-md rounded-full border border-white/10 text-[8px] text-gold-elegant font-bold uppercase tracking-[0.2em]">
-                          {relic.category || "Warisan"}
-                       </span>
+          <div className="space-y-24">
+            {filteredRelics.length === 0 ? (
+              <div className="text-center py-32 glass rounded-3xl border border-white/5">
+                <h3 className="text-2xl font-cinzel text-cream/40 px-4 uppercase tracking-[0.2em]">Koleksi tidak ditemukan</h3>
+                <p className="text-cream/20 mt-4 italic">Coba kata kunci atau kategori lain.</p>
+              </div>
+            ) : filteredRelics.map((relic, i) => {
+                console.log(relic);
+                return (
+                  <motion.div 
+                    key={relic.id || i}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                    viewport={{ once: true }}
+                    className={`flex flex-col lg:flex-row gap-12 items-center ${i % 2 !== 0 ? 'lg:flex-row-reverse' : ''}`}
+                  >
+                    {/* Image with Decorative Border */}
+                    <div className="flex-1 relative group w-full lg:max-w-xl">
+                      <div className="absolute -inset-2 border border-gold-elegant/10 rounded-2xl group-hover:-inset-4 transition-all duration-700" />
+                      <div className="relative aspect-[16/10] rounded-xl overflow-hidden glass shadow-xl">
+                        <img 
+                          src={getImageUrl(relic)} 
+                          alt={relic.title} 
+                          loading="lazy"
+                          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-matte-black/60 via-transparent to-transparent" />
+                        
+                        <div className="absolute top-4 left-4">
+                           <span className="px-3 py-1 bg-matte-black/60 backdrop-blur-md rounded-full border border-white/10 text-[7px] text-gold-elegant font-bold uppercase tracking-[0.2em]">
+                              {relic.category || "Warisan"}
+                           </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-
-                {/* Text Content */}
-                <div className="flex-1 space-y-8">
-                  <h2 className="text-4xl md:text-6xl font-cinzel text-white leading-tight">{relic.title}</h2>
-                  
-                  {relic.philosophy && (
-                    <div className="p-8 bg-white/2 border-l-2 border-gold-elegant rounded-r-xl">
-                      <h4 className="text-xs uppercase tracking-widest text-gold-elegant/60 mb-2">Filosofi</h4>
-                      <p className="text-xl font-cinzel text-cream/90 italic leading-relaxed">
-                        "{relic.philosophy}"
-                      </p>
+ 
+                    {/* Text Content */}
+                    <div className="flex-1 space-y-6">
+                      <h2 className="text-3xl md:text-5xl font-cinzel text-white leading-tight">{relic.title}</h2>
+                      
+                      {relic.philosophy && (
+                        <div className="p-6 bg-white/2 border-l-2 border-gold-elegant rounded-r-xl">
+                          <p className="text-lg font-cinzel text-cream/90 italic leading-relaxed">
+                            "{relic.philosophy}"
+                          </p>
+                        </div>
+                      )}
+ 
+                      <div className="prose prose-invert max-w-none">
+                        <div 
+                          className="text-base text-cream/60 leading-relaxed line-clamp-3 font-light"
+                          dangerouslySetInnerHTML={{ __html: relic.description || relic.desc }}
+                        />
+                      </div>
+ 
+                      <div className="flex flex-wrap gap-3 pt-2">
+                        <Button 
+                          onClick={() => setSelectedRelic(relic)}
+                          variant="outline" 
+                          className="gap-2 px-6 py-4 rounded-xl group hover:bg-gold-elegant/10 text-[10px]"
+                        >
+                          <Info size={14} className="group-hover:text-gold-elegant transition-colors" />
+                          Detail
+                        </Button>
+                        
+                        <Button 
+                          onClick={() => setActiveVideo(relic)}
+                          variant="ghost" 
+                          className={`gap-2 px-6 py-4 rounded-xl group text-[10px] ${getVideoUrl(relic) ? "text-gold-elegant border border-gold-elegant/20" : ""}`}
+                        >
+                          <PlayCircle size={14} className="group-hover:text-gold-elegant transition-colors" />
+                          Video
+                        </Button>
+                      </div>
                     </div>
-                  )}
-
-                  <p className="text-lg text-cream/60 leading-loose">
-                    {relic.description || relic.desc} Setiap elemen pada pusaka ini dikerjakan dengan ritual dan keahlian tinggi oleh para leluhur, menjadikannya bukan sekadar benda, melainkan perwujudan doa dan harapan.
-                  </p>
-
-                  <div className="flex flex-wrap gap-4 pt-4">
-                    <Button 
-                      onClick={() => setSelectedRelic(relic)}
-                      variant="outline" 
-                      className="gap-2 px-8 py-6 rounded-2xl group hover:bg-gold-elegant/10"
-                    >
-                      <Info size={18} className="group-hover:text-gold-elegant transition-colors" />
-                      Detail Lengkap
-                    </Button>
-                    
-                    <Button 
-                      onClick={() => setActiveVideo(relic)}
-                      variant="ghost" 
-                      className={`gap-2 px-8 py-6 rounded-2xl group ${relic.videoUrl ? "text-gold-elegant border border-gold-elegant/20" : ""}`}
-                    >
-                      <PlayCircle size={18} className="group-hover:text-gold-elegant transition-colors" />
-                      Video Dokumentasi
-                    </Button>
-
-                    {relic.audioUrl && (
-                      <Button 
-                        onClick={() => {
-                          const audio = new Audio(relic.audioUrl);
-                          audio.play();
-                        }}
-                        variant="ghost" 
-                        className="gap-2 px-8 py-6 rounded-2xl group"
-                      >
-                        <Volume2 size={18} className="group-hover:text-gold-elegant transition-colors" />
-                        Dengarkan Narasi
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                  </motion.div>
+                );
+              })}
           </div>
         )}
       </div>
@@ -187,7 +223,7 @@ export default function Relics() {
               className="relative w-full max-w-6xl bg-[#121212] rounded-[3rem] border border-white/10 overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
             >
               <div className="w-full md:w-1/2 h-64 md:h-auto relative">
-                 <img src={selectedRelic.imageUrl || selectedRelic.image} alt="" className="w-full h-full object-cover" />
+                 <img src={getImageUrl(selectedRelic)} alt="" className="w-full h-full object-cover" />
                  <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent md:bg-gradient-to-r" />
               </div>
               
@@ -207,35 +243,39 @@ export default function Relics() {
                     </div>
 
                     <div className="prose prose-invert max-w-none">
-                       <p className="text-cream/70 text-lg leading-loose font-light">
-                          {selectedRelic.description || selectedRelic.desc}
-                       </p>
+                       <div 
+                         className="text-cream/70 text-lg leading-loose font-light"
+                         dangerouslySetInnerHTML={{ __html: selectedRelic.description || selectedRelic.desc }}
+                       />
                     </div>
+
+                    {selectedRelic.galleryUrls && selectedRelic.galleryUrls.length > 0 && (
+                      <div className="space-y-6">
+                        <h4 className="text-[10px] text-gold-elegant uppercase tracking-widest font-black">Gallery Visual</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {selectedRelic.galleryUrls.map((url: string, idx: number) => (
+                            <div key={idx} className="aspect-square rounded-2xl overflow-hidden glass border border-white/5">
+                              <img src={url} alt="" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {selectedRelic.philosophy && (
                       <div className="p-10 bg-white/5 rounded-[2rem] border-l-4 border-gold-elegant">
                          <h4 className="text-[10px] text-gold-elegant uppercase tracking-widest font-black mb-4">Filosofi & Makna</h4>
-                         <p className="text-xl font-cinzel text-cream leading-relaxed italic">
-                            "{selectedRelic.philosophy}"
-                         </p>
+                         <div 
+                           className="text-xl font-cinzel text-cream leading-relaxed italic"
+                           dangerouslySetInnerHTML={{ __html: selectedRelic.philosophy }}
+                         />
                       </div>
                     )}
-
-                    <div className="pt-10 border-t border-white/5 flex flex-wrap gap-8">
-                       <div className="space-y-1">
-                          <span className="text-[10px] text-cream/20 uppercase tracking-widest block font-bold">Asal Wilayah</span>
-                          <span className="text-white font-cinzel uppercase">{selectedRelic.region || "Tidak Tercatat"}</span>
-                       </div>
-                       <div className="space-y-1">
-                          <span className="text-[10px] text-cream/20 uppercase tracking-widest block font-bold">Kondisi Fisik</span>
-                          <span className="text-white font-cinzel uppercase">Terawat</span>
-                       </div>
-                    </div>
 
                     <div className="pt-6">
                        <Button 
                         onClick={() => {
-                          if (selectedRelic.videoUrl) {
+                          if (getVideoUrl(selectedRelic)) {
                             setActiveVideo(selectedRelic);
                             setSelectedRelic(null);
                           } else {
@@ -279,9 +319,9 @@ export default function Relics() {
                   <X size={24} />
                </button>
 
-               {activeVideo.videoUrl ? (
+               {getVideoUrl(activeVideo) ? (
                  <iframe 
-                   src={getEmbedUrl(activeVideo.videoUrl)} 
+                   src={getEmbedUrl(getVideoUrl(activeVideo))} 
                    className="w-full h-full"
                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                    allowFullScreen

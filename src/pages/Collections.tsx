@@ -1,17 +1,20 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Filter, ZoomIn, MapPin } from "lucide-react";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { db, handleFirestoreError, OperationType } from "../lib/firebase";
+import { Search, MapPin } from "lucide-react";
+import { getAllDocuments, getImageUrl } from "../services/db";
 
 interface Artefact {
   id: string;
   title: string;
   description: string;
-  imageUrl: string;
+  image_url: string;
+  thumbnail?: string;
   category: string;
-  region: string;
-  origin: string;
+  region?: string;
+  origin?: string;
+  kingdomId?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 const CATEGORIES = ["Semua", "Keris", "Batik", "Wayang", "Rumah Adat", "Alat Musik", "Tarian"];
@@ -26,40 +29,87 @@ export default function Collections() {
   useEffect(() => {
     const fetchArtefacts = async () => {
       try {
-        const q = query(collection(db, "collections"), orderBy("title"));
-        const querySnapshot = await getDocs(q);
-        const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Artefact));
-        setArtefacts(data);
+        console.log('Fetching artefacts from contents table...');
+        const data = await getAllDocuments<Artefact>("budaya");
+        console.log('Fetched data:', data);
+
+        if (data.length > 0) {
+          console.log('Found', data.length, 'collections in database');
+          setArtefacts(data);
+        } else {
+          console.log('No collections found in database, using fallback data');
+          setArtefacts([
+            {
+              id: "1",
+              title: "Keris Kyai Naga Sasra",
+              description: "Salah satu keris paling legendaris dengan luk 13 dan hiasan naga yang sangat detail.",
+              image_url: "https://images.unsplash.com/photo-1596431969248-18e3a2b72ce2?q=80&w=800",
+              category: "Keris",
+              region: "Jawa Tengah",
+              origin: "Majapahit",
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            },
+            {
+              id: "2",
+              title: "Wayang Kulit Purwa",
+              description: "Pementasan Wayang Kulit yang merupakan warisan budaya dunia takbenda dari UNESCO.",
+              image_url: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?q=80&w=800",
+              category: "Wayang",
+              region: "DI Yogyakarta",
+              origin: "Mataram",
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            },
+            {
+              id: "3",
+              title: "Gamelan Ageng",
+              description: "Perangkat musik tradisional yang menghasilkan harmoni suara spiritual Nusantara.",
+              image_url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800",
+              category: "Alat Musik",
+              region: "Bali",
+              origin: "Bali",
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }
+          ]);
+        }
       } catch (error) {
-        // If collection doesn't exist, we'll use mock data for the demo
-        console.warn("Using mock data as collections is empty or inaccessible");
+        console.error("Failed to load artefacts:", error);
+        console.log('Using fallback data due to error');
         setArtefacts([
           {
             id: "1",
             title: "Keris Kyai Naga Sasra",
             description: "Salah satu keris paling legendaris dengan luk 13 dan hiasan naga yang sangat detail.",
-            imageUrl: "https://images.unsplash.com/photo-1596431969248-18e3a2b72ce2?q=80&w=800",
+            image_url: "https://images.unsplash.com/photo-1596431969248-18e3a2b72ce2?q=80&w=800",
             category: "Keris",
             region: "Jawa Tengah",
-            origin: "Majapahit"
+            origin: "Majapahit",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           },
           {
             id: "2",
             title: "Wayang Kulit Purwa",
             description: "Pementasan Wayang Kulit yang merupakan warisan budaya dunia takbenda dari UNESCO.",
-            imageUrl: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?q=80&w=800",
+            image_url: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?q=80&w=800",
             category: "Wayang",
             region: "DI Yogyakarta",
-            origin: "Mataram"
+            origin: "Mataram",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           },
           {
             id: "3",
             title: "Gamelan Ageng",
             description: "Perangkat musik tradisional yang menghasilkan harmoni suara spiritual Nusantara.",
-            imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800",
+            image_url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800",
             category: "Alat Musik",
             region: "Bali",
-            origin: "Bali"
+            origin: "Bali",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           }
         ]);
       } finally {
@@ -137,7 +187,7 @@ export default function Collections() {
             >
               <div className="aspect-[4/5] relative overflow-hidden">
                 <img 
-                  src={item.imageUrl} 
+                  src={getImageUrl(item)} 
                   alt={item.title} 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                 />
@@ -149,7 +199,7 @@ export default function Collections() {
               <div className="p-8">
                 <div className="flex items-center gap-2 text-gold-elegant/60 text-[10px] uppercase tracking-widest mb-3">
                   <MapPin size={12} />
-                  {item.region}
+                  {item.region || "Nusantara"}
                 </div>
                 <h3 className="text-2xl font-cinzel mb-3 text-white group-hover:text-gold-elegant transition-colors">{item.title}</h3>
                 <p className="text-sm text-cream/60 line-clamp-2 leading-relaxed">
@@ -176,7 +226,7 @@ export default function Collections() {
                 className="relative w-full max-w-6xl glass rounded-3xl overflow-hidden shadow-2xl border border-white/10 flex flex-col md:flex-row h-full max-h-[800px]"
               >
                 <div className="md:w-1/2 h-64 md:h-auto relative">
-                  <img src={selectedItem.imageUrl} alt={selectedItem.title} className="w-full h-full object-cover" />
+                  <img src={getImageUrl(selectedItem)} alt={selectedItem.title} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent to-matte-black opacity-30" />
                 </div>
                 

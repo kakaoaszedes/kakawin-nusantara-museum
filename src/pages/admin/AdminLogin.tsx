@@ -1,106 +1,133 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "motion/react";
-import { Loader2, Globe } from "lucide-react";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { auth, db } from "../../lib/firebase";
+import { Globe, Loader2 } from "lucide-react";
 import { Button } from "../../components/ui/Button";
-
-const ADMIN_EMAIL = "psychompop@gmail.com";
+import { supabase } from "../../lib/supabase";
+import { uploadToCloudinary } from "../../services/uploadService";
 
 export default function AdminLogin() {
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleGoogleLogin = async () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [image_url, setImage_url] = useState("");
+
+  const handleLogin = async () => {
     setLoading(true);
-    setError("");
+    setErrorMsg("");
 
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-      if (user.email === ADMIN_EMAIL) {
-        // Ensure admin document exists
-        const adminRef = doc(db, "admins", user.uid);
-        const adminDoc = await getDoc(adminRef);
-        
-        if (!adminDoc.exists()) {
-          await setDoc(adminRef, {
-            email: user.email,
-            role: "super_admin",
-            createdAt: new Date().toISOString()
-          });
-        }
-        
-        navigate("/admin/dashboard");
-      } else {
-        setError("Akses ditolak. Email Anda tidak terdaftar sebagai admin.");
-        await auth.signOut();
-      }
-    } catch (err: any) {
-      setError("Login gagal. Terjadi kesalahan saat autentikasi.");
-      console.error(err);
-    } finally {
-      setLoading(false);
+    setLoading(false);
+
+    if (error) {
+      setErrorMsg(error.message);
+      return;
     }
+
+    navigate("/admin/dashboard");
+  };
+
+  // TEST UPLOAD CLOUDINARY
+  const handleUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    const uploaded = await uploadToCloudinary(file);
+
+    console.log(uploaded);
+
+    setImage_url(uploaded.url);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-matte-black p-6">
+    <div className="min-h-screen flex items-center justify-center bg-matte-black p-6 overflow-hidden relative">
+      {/* Background Glow */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold-elegant/5 blur-[120px] rounded-full" />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md relative z-10"
-      >
-        <div className="glass p-12 rounded-3xl border border-white/5 shadow-2xl">
-          <div className="text-center mb-12">
-            <div className="w-16 h-16 bg-gold-elegant rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(212,175,55,0.3)]">
-              <Globe className="text-matte-black" size={32} />
-            </div>
-            <h1 className="text-3xl font-cinzel text-white mb-2">Admin Sanctuary</h1>
-            <p className="text-cream/50 text-sm tracking-widest uppercase">Pusat Kurasi Kakawin Nusantara</p>
-          </div>
+      {/* Card */}
+      <div className="glass p-12 rounded-3xl border border-white/5 shadow-2xl relative z-10 max-w-md w-full">
+        {/* Logo */}
+        <div className="w-16 h-16 bg-gold-elegant rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(212,175,55,0.3)]">
+          <Globe className="text-matte-black" size={32} />
+        </div>
 
-          <div className="space-y-6">
-            <Button 
-              onClick={handleGoogleLogin} 
-              className="w-full py-6 rounded-xl text-lg font-bold flex items-center justify-center gap-3"
-              disabled={loading}
-            >
-              {loading ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <>
-                  <img src="https://www.google.com/favicon.ico" className="w-6 h-6" alt="Google" />
-                  Masuk dengan Google
-                </>
-              )}
-            </Button>
-            
-            {error && (
-              <motion.p 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-red-400 text-sm text-center font-medium"
-              >
-                {error}
-              </motion.p>
+        {/* Title */}
+        <h1 className="text-3xl font-cinzel text-white text-center mb-2">
+          Admin Portal
+        </h1>
+
+        <p className="text-cream/50 text-sm tracking-widest uppercase text-center mb-10">
+          Kakawin Library Control Center
+        </p>
+
+        {/* Form */}
+        <div className="space-y-5">
+          <input
+            type="email"
+            placeholder="Email Admin"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white outline-none focus:border-gold-elegant transition-all"
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white outline-none focus:border-gold-elegant transition-all"
+          />
+
+          {errorMsg && (
+            <div className="text-red-400 text-sm text-center">
+              {errorMsg}
+            </div>
+          )}
+
+          <Button
+            onClick={handleLogin}
+            disabled={loading}
+            className="w-full py-6 rounded-xl text-lg font-bold flex items-center justify-center gap-3"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin" size={20} />
+                Memproses...
+              </>
+            ) : (
+              "Masuk Dashboard"
+            )}
+          </Button>
+
+          {/* TEST UPLOAD */}
+          <div className="pt-6 border-t border-white/10">
+            <input
+              type="file"
+              onChange={handleUpload}
+              className="w-full text-sm text-white"
+            />
+
+            {image_url && (
+              <img
+                src={image_url}
+                alt="Uploaded"
+                className="mt-4 rounded-xl"
+              />
             )}
           </div>
-
-          <p className="mt-10 text-center text-cream/30 text-xs leading-relaxed uppercase tracking-widest">
-            Hanya kurator terverifikasi yang diperbolehkan mengolah arsip digital museum.
-          </p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

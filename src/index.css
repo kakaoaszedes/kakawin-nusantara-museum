@@ -46,3 +46,59 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+.admin-select {
+  color-scheme: dark;
+}
+
+.admin-select option {
+  background-color: #18181b;
+  color: #ffffff;
+}
+
+/* Custom Quill Dark Theme */
+.quill-dark .ql-toolbar {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.quill-dark .ql-container {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+.quill-dark .ql-stroke {
+  stroke: rgba(255, 255, 255, 0.5) !important;
+}
+.quill-dark .ql-fill {
+  fill: rgba(255, 255, 255, 0.5) !important;
+}
+.quill-dark .ql-picker {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+.quill-dark .ql-picker-options {
+  background: #161616 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.quill-dark .ql-editor.ql-blank::before {
+  color: rgba(255, 255, 255, 0.1) !important;
+  font-style: normal;
+}
+.quill-dark .ql-editor {
+  min-height: 200px;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.2);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.4);
+}

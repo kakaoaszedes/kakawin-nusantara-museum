@@ -16,11 +16,12 @@ import Kingdoms from "./pages/Kingdoms";
 import KingdomArchive from "./pages/KingdomArchive";
 import Contact from "./pages/Contact";
 import Exhibitions from "./pages/Exhibitions";
-import VirtualTour from "./pages/VirtualTour";
 import AudioExperience from "./pages/AudioExperience";
 import Gallery from "./pages/Gallery";
+import { supabase } from "./lib/supabase"
 import AdminLogin from "./pages/admin/AdminLogin";
 import Dashboard from "./pages/admin/Dashboard";
+console.log(supabase)
 
 // AppContent component to use useLocation
 function AppContent() {
@@ -42,7 +43,6 @@ function AppContent() {
           <Route path="/kingdom-archive" element={<KingdomArchive />} />
           <Route path="/collections" element={<Collections />} />
           <Route path="/gallery" element={<Gallery />} />
-          <Route path="/virtual-tour" element={<VirtualTour />} />
           <Route path="/audio-experience" element={<AudioExperience />} />
           <Route path="/exhibitions" element={<Exhibitions />} />
           <Route path="/contact" element={<Contact />} />

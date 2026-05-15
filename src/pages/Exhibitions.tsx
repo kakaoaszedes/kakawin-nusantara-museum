@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Calendar, Ticket, ArrowRight, History, Loader2 } from "lucide-react";
 import { Button } from "../components/ui/Button";
-import { getAllDocuments } from "../services/db";
+import { getAllDocuments, getImageUrl } from "../services/db";
 
 export default function Exhibitions() {
   const [exhibitions, setExhibitions] = useState<any[]>([]);
@@ -12,7 +12,7 @@ export default function Exhibitions() {
   useEffect(() => {
     const fetchExhibitions = async () => {
       try {
-        const data = await getAllDocuments("exhibitions");
+        const data = await getAllDocuments("pameran");
         setExhibitions(data);
       } catch (err) {
         console.error(err);
@@ -122,7 +122,7 @@ export default function Exhibitions() {
                       className="relative h-[550px] rounded-[3rem] overflow-hidden group shadow-2xl border border-white/5 bg-[#121212]"
                     >
                       <img 
-                        src={event.imageUrl || event.image} 
+                        src={getImageUrl(event)} 
                         alt={event.title}
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 opacity-60" 
                       />
@@ -146,9 +146,12 @@ export default function Exhibitions() {
                          </div>
                          
                          <h2 className="text-3xl font-cinzel text-white mb-4 leading-tight">{event.title}</h2>
-                         <p className="text-sm text-cream/70 mb-8 leading-relaxed line-clamp-3 italic">
-                           {event.description || event.desc}
-                         </p>
+                         <div className="prose prose-invert max-w-none">
+                            <div 
+                              className="text-sm text-cream/70 mb-8 leading-relaxed line-clamp-3 italic"
+                              dangerouslySetInnerHTML={{ __html: event.description || event.desc }}
+                            />
+                         </div>
 
                          <div className="flex items-center justify-between pt-6 border-t border-white/10">
                             <Button variant="outline" className="gap-2 rounded-full px-6 group/btn">
@@ -183,12 +186,17 @@ export default function Exhibitions() {
                   {upcomingEvents.length > 0 ? upcomingEvents.map((event, idx) => (
                     <div key={event.id || idx} className="glass p-8 rounded-3xl border border-white/5 flex flex-col md:flex-row gap-8 group hover:bg-white/5 transition-all">
                       <div className="w-full md:w-64 h-48 rounded-2xl overflow-hidden shrink-0">
-                        <img src={event.imageUrl || event.image} alt={event.title} className="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
+                        <img src={getImageUrl(event)} alt={event.title} className="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
                       </div>
                       <div className="flex-1 space-y-4">
                         <span className="text-gold-elegant font-cinzel text-sm">{event.date || event.startDate}</span>
                         <h4 className="text-2xl font-cinzel text-white">{event.title}</h4>
-                        <p className="text-cream/60 text-sm leading-relaxed">{event.description || event.desc}</p>
+                        <div className="prose prose-invert max-w-none">
+                           <div 
+                             className="text-cream/60 text-sm leading-relaxed"
+                             dangerouslySetInnerHTML={{ __html: event.description || event.desc }}
+                           />
+                        </div>
                         <button className="text-gold-elegant text-xs uppercase tracking-widest font-bold flex items-center gap-2 pt-2">
                            Set Remainder
                            <ArrowRight size={14} />
