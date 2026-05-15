@@ -262,7 +262,7 @@ export default function Kerajaan() {
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              className="relative w-full max-w-6xl max-h-[90vh] bg-[#121212] rounded-[2rem] md:rounded-[3rem] border border-white/10 overflow-hidden shadow-2xl flex flex-col md:flex-row"
+              className="relative w-full max-w-6xl h-[92vh] md:max-h-[90vh] bg-[#121212] rounded-[2rem] md:rounded-[3rem] border border-white/10 overflow-hidden shadow-2xl flex flex-col md:flex-row"
             >
               <div className="w-full md:w-1/2 h-64 md:h-auto relative">
                 <img
@@ -274,10 +274,10 @@ export default function Kerajaan() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent md:bg-gradient-to-r" />
               </div>
 
-              <div className="flex-1 p-6 md:p-16 overflow-y-auto max-h-[90vh] custom-scrollbar">
+              <div className="flex-1 p-6 pt-20 md:p-16 overflow-y-auto custom-scrollbar">
                 <button
                   onClick={() => setSelectedKerajaan(null)}
-                  className="absolute top-6 right-6 text-cream/30 hover:text-white transition-colors"
+                  className="absolute top-5 right-5 z-50 bg-black/40 rounded-full p-2 text-cream/60 hover:text-white transition-colors"
                 >
                   <X size={24} />
                 </button>
