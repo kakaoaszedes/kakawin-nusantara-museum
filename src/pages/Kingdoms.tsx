@@ -274,10 +274,10 @@ export default function Kerajaan() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent md:bg-gradient-to-r" />
               </div>
 
-              <div className="flex-1 p-6 pt-20 md:p-16 overflow-y-auto custom-scrollbar">
+              <div className="flex-1 p-6 pt-24 md:p-16 overflow-y-auto max-h-[90vh] custom-scrollbar">
                 <button
                   onClick={() => setSelectedKerajaan(null)}
-                  className="absolute top-5 right-5 z-50 bg-black/40 rounded-full p-2 text-cream/60 hover:text-white transition-colors"
+                  className="absolute top-4 right-4 z-[999] bg-black/60 backdrop-blur-md rounded-full p-3 text-cream/80 hover:text-white transition-colors"
                 >
                   <X size={24} />
                 </button>
