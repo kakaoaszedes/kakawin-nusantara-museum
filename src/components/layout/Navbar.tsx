@@ -45,7 +45,7 @@ export function Navbar() {
           </motion.div>
           <div className="flex flex-col">
             <span className="text-xl font-cinzel font-bold text-gold-elegant tracking-widest leading-none">KAKAWIN</span>
-            <span className="text-[10px] text-cream tracking-[0.2em] font-poppins">NUSANTARA MUSEUM</span>
+            <span className="text-[10px] text-cream tracking-[0.2em] font-poppins">NUSANTARA</span>
           </div>
         </Link>
 

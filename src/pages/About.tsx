@@ -31,7 +31,6 @@ export default function About() {
             <img src="https://www.indonesia.travel/contentassets/3a40b74e9d574e1ca94a85506a26e1ed/wayang.png" alt="Culture" className="w-full h-full object-cover grayscale opacity-50" />
             <div className="absolute inset-0 flex items-center justify-center p-12">
               <div className="text-center font-cinzel text-white space-y-4">
-                <span className="text-6xl block text-gold-elegant">X</span>
                 <span className="text-2xl tracking-[0.3em] uppercase">Wayang Kulit</span>
               </div>
             </div>
@@ -82,7 +81,7 @@ export default function About() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
             <h2 className="text-4xl font-cinzel text-gold-elegant mb-4">Nilai-Nilai Luhur</h2>
-            <p className="text-cream/40 uppercase tracking-widest text-xs">Pilar yang menyangga museum kami</p>
+            <p className="text-cream/40 uppercase tracking-widest text-xs">Pilar yang menyangga Kakawin Nusantara</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-12">

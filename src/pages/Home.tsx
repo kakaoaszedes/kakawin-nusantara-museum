@@ -3,7 +3,36 @@ import { ArrowRight, Compass, History, BookOpen, User } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Link } from "react-router-dom";
 
+import KerajaanImage from "../image/Kerajaan.png";
+import ManuskripImage from "../image/Manuskrip.png";
+import HeroImage from "../image/Hero.png";
+import ArtImage from "../image/Art.png";
+
 export default function Home() {
+  const categories = [
+    {
+      title: "Sejarah Kerajaan",
+      icon: <History size={32} />,
+      desc: "Telusuri jejak Majapahit, Sriwijaya, hingga Mataram.",
+      path: "/kingdoms",
+      image: KerajaanImage,
+    },
+    {
+      title: "Sastra",
+      icon: <BookOpen size={32} />,
+      desc: "Resapi keindahan bait Kakawin dan manuskrip kuno.",
+      path: "/manuscripts",
+      image: ManuskripImage,
+    },
+    {
+      title: "Tokoh Budaya",
+      icon: <User size={32} />,
+      desc: "Kenali pahlawan dan pujangga hebat Nusantara.",
+      path: "/figures",
+      image: HeroImage,
+    },
+  ];
+
   return (
     <div className="relative min-h-screen">
       {/* Hero Section */}
@@ -33,7 +62,7 @@ export default function Home() {
               <Link to="/collections">
                 <Button size="lg" className="w-full sm:w-auto gap-2">
                   <Compass size={20} />
-                  Explore Museum
+                  Explore Collections
                 </Button>
               </Link>
             </div>
@@ -68,7 +97,7 @@ export default function Home() {
             </h2>
 
             <p className="text-lg text-cream/80 mb-6 leading-loose">
-              Kakawin Nusantara Museum hadir sebagai jembatan antara masa lalu
+              Kakawin Nusantara hadir sebagai jembatan antara masa lalu
               yang agung dan masa depan yang digital.
               Kami mendedikasikan platform ini untuk melestarikan setiap
               jengkal sejarah yang membentuk identitas bangsa.
@@ -89,7 +118,7 @@ export default function Home() {
             <div className="space-y-4 pt-12">
               <div className="aspect-[3/4] rounded-lg overflow-hidden glass border border-white/10 grayscale hover:grayscale-0 transition-all duration-700">
                 <img
-                  src="https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?q=80&w=2670"
+                  src="https://pusakakeris.com/wp-content/uploads/2019/02/Jual-Keris.jpg"
                   alt="Culture"
                   loading="lazy"
                   className="w-full h-full object-cover"
@@ -98,7 +127,7 @@ export default function Home() {
 
               <div className="aspect-square rounded-lg overflow-hidden glass border border-white/10 grayscale hover:grayscale-0 transition-all duration-700">
                 <img
-                  src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=2670"
+                  src="https://images.unsplash.com/photo-1542897643-8158da5b4607?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8YnVkYXlhJTIwaW5kb25lc2lhfGVufDB8fDB8fHww"
                   alt="Kingdom"
                   loading="lazy"
                   className="w-full h-full object-cover"
@@ -108,17 +137,17 @@ export default function Home() {
 
             <div className="space-y-4">
               <div className="aspect-square rounded-lg overflow-hidden glass border border-white/10 grayscale hover:grayscale-0 transition-all duration-700">
-                <img
-                  src="https://images.unsplash.com/photo-1596431969248-18e3a2b72ce2?q=80&w=2670"
-                  alt="Art"
-                  loading="lazy"
-                  className="w-full h-full object-cover"
+               <img
+                src={ArtImage}
+                alt="Art"
+                loading="lazy"
+                className="w-full h-full object-cover"
                 />
               </div>
 
               <div className="aspect-[3/4] rounded-lg overflow-hidden glass border border-white/10 grayscale hover:grayscale-0 transition-all duration-700">
                 <img
-                  src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=2670"
+                  src="https://images.unsplash.com/photo-1533339577339-9007cb316e9c?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGluZG9uZXNpYXxlbnwwfHwwfHx8MA%3D%3D"
                   alt="Nature"
                   loading="lazy"
                   className="w-full h-full object-cover"
@@ -171,32 +200,7 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Sejarah Kerajaan",
-                icon: <History size={32} />,
-                desc: "Telusuri jejak Majapahit, Sriwijaya, hingga Mataram.",
-                path: "/kingdoms",
-                image:
-                  "https://images.unsplash.com/photo-1605649406093-f25492476594?q=80&w=1000",
-              },
-              {
-                title: "Sastra",
-                icon: <BookOpen size={32} />,
-                desc: "Resapi keindahan bait Kakawin dan manuskrip kuno.",
-                path: "/manuscripts",
-                image:
-                  "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=1000",
-              },
-              {
-                title: "Tokoh Budaya",
-                icon: <User size={32} />,
-                desc: "Kenali pahlawan dan pujangga hebat Nusantara.",
-                path: "/figures",
-                image:
-                  "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=1000",
-              },
-            ].map((item, index) => (
+            {categories.map((item, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}

@@ -54,7 +54,7 @@ function AppContent() {
       {!isAdminPath && (
         <footer className="py-12 px-6 border-t border-white/5 bg-matte-black text-center">
           <div className="max-w-7xl mx-auto">
-            <h3 className="font-cinzel text-xl text-gold-elegant mb-4 uppercase tracking-[0.2em]">Kakawin Nusantara Museum</h3>
+            <h3 className="font-cinzel text-xl text-gold-elegant mb-4 uppercase tracking-[0.2em]">Kakawin Nusantara</h3>
             <p className="text-cream/40 text-sm mb-8">© 2026 Pelestarian Digital Warisan Nusantara. All Rights Reserved.</p>
             <div className="flex justify-center gap-8">
               <a href="https://www.instagram.com/kakawin.id?igsh=MWQ4M2VlbTZqbWoyZQ==" target="_blank" rel="noopener noreferrer" className="text-cream/60 hover:text-gold-elegant transition-colors">Instagram</a>

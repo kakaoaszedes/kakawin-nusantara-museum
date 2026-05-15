@@ -304,7 +304,7 @@ export default function Timeline() {
                     </span>
 
                     <span className="text-sm text-gold-elegant font-cinzel">
-                      Museum Kakawin Nusantara
+                     Kakawin Nusantara
                     </span>
                   </div>
                 </div>
