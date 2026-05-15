@@ -13,7 +13,7 @@ export default function Home() {
     {
       title: "Sejarah Kerajaan",
       icon: <History size={32} />,
-      desc: "Telusuri jejak Majapahit, Sriwijaya, hingga Mataram.",
+      desc: "Menapaki Tanah yang Pernah Dipenuhi Cahaya Keagungan, Ketika Nusantara Menulis Riwayatnya Sendiri.",
       path: "/kingdoms",
       image: KerajaanImage,
     },
@@ -25,7 +25,7 @@ export default function Home() {
       image: ManuskripImage,
     },
     {
-      title: "Tokoh Budaya",
+      title: "Figur Peradaban",
       icon: <User size={32} />,
       desc: "Kenali pahlawan dan pujangga hebat Nusantara.",
       path: "/figures",

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Landmark, Map, Loader2, X, Info, Search } from "lucide-react";
@@ -34,6 +33,7 @@ export default function Kerajaan() {
 
   const filteredKerajaan = kerajaan.filter((item) => {
     const keyword = searchQuery.toLowerCase();
+
     return [
       item.name,
       item.title,
@@ -102,7 +102,10 @@ export default function Kerajaan() {
             <h3 className="text-2xl font-cinzel text-cream/40 px-4">
               KERAJAAN TIDAK DITEMUKAN
             </h3>
-            <p className="text-cream/20 mt-4 italic">Coba kata kunci lain.</p>
+
+            <p className="text-cream/20 mt-4 italic">
+              Coba kata kunci lain.
+            </p>
           </div>
         ) : (
           <div className="space-y-40">
@@ -152,7 +155,7 @@ export default function Kerajaan() {
                   <div className="flex-1 space-y-8">
                     <div className="space-y-4">
                       <span className="text-gold-elegant font-cinzel text-base tracking-[0.3em] block mb-4 uppercase">
-                          {item.period || item.year}
+                        {item.period || item.year}
                       </span>
 
                       <h2 className="text-4xl md:text-6xl font-cinzel text-white mb-6 tracking-wider">
@@ -161,9 +164,12 @@ export default function Kerajaan() {
 
                       <div className="prose prose-invert max-w-none">
                         <div
-                          className="text-lg text-cream/70 leading-loose line-clamp-3 font-light"
+                          className="text-cream/70 text-lg leading-loose line-clamp-3 font-light"
                           dangerouslySetInnerHTML={{
-                            __html: item.description || "",
+                            __html:
+                              item.description ||
+                              item.content ||
+                              "",
                           }}
                         />
                       </div>
@@ -215,6 +221,7 @@ export default function Kerajaan() {
                       <div className="space-y-4">
                         <div className="flex items-center gap-4">
                           <Map className="text-gold-elegant" size={24} />
+
                           <span className="text-xs text-cream/40 uppercase tracking-widest">
                             Peta Wilayah
                           </span>
@@ -229,6 +236,7 @@ export default function Kerajaan() {
                       className="text-gold-elegant font-medium flex items-center gap-4 hover:gap-6 transition-all group"
                     >
                       <span className="h-px w-12 bg-gold-elegant group-hover:w-20 transition-all" />
+
                       Buka Arsip Dokumentasi
                     </button>
                   </div>
@@ -241,7 +249,7 @@ export default function Kerajaan() {
 
       <AnimatePresence>
         {selectedKerajaan && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 md:p-12">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -254,7 +262,7 @@ export default function Kerajaan() {
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              className="relative w-full max-w-6xl bg-[#121212] rounded-[3rem] border border-white/10 overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
+              className="relative w-full max-w-6xl max-h-[90vh] bg-[#121212] rounded-[2rem] md:rounded-[3rem] border border-white/10 overflow-hidden shadow-2xl flex flex-col md:flex-row"
             >
               <div className="w-full md:w-1/2 h-64 md:h-auto relative">
                 <img
@@ -266,10 +274,10 @@ export default function Kerajaan() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent md:bg-gradient-to-r" />
               </div>
 
-              <div className="flex-1 p-8 md:p-16 overflow-y-auto custom-scrollbar">
+              <div className="flex-1 p-6 md:p-16 overflow-y-auto max-h-[90vh] custom-scrollbar">
                 <button
                   onClick={() => setSelectedKerajaan(null)}
-                  className="absolute top-8 right-8 text-cream/30 hover:text-white transition-colors"
+                  className="absolute top-6 right-6 text-cream/30 hover:text-white transition-colors"
                 >
                   <X size={24} />
                 </button>
@@ -280,7 +288,7 @@ export default function Kerajaan() {
                       {selectedKerajaan.period || selectedKerajaan.year}
                     </span>
 
-                    <h2 className="text-4xl md:text-5xl font-cinzel text-white mb-2">
+                    <h2 className="text-3xl md:text-5xl font-cinzel text-white mb-2">
                       {selectedKerajaan.name || selectedKerajaan.title}
                     </h2>
 
@@ -291,9 +299,12 @@ export default function Kerajaan() {
 
                   <div className="prose prose-invert max-w-none">
                     <div
-                      className="text-cream/70 text-lg leading-loose font-light"
+                      className="text-cream/70 text-base md:text-lg leading-loose font-light"
                       dangerouslySetInnerHTML={{
-                        __html: selectedKerajaan.description || "",
+                        __html:
+                          selectedKerajaan.description ||
+                          selectedKerajaan.content ||
+                          "",
                       }}
                     />
                   </div>
